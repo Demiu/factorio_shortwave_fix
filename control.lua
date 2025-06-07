@@ -367,6 +367,21 @@ local function OnEntitySettingChanged(event)
   end
 end
 
+-- Handle force merging
+-- Step 1: Delete the link entities for the old force
+-- Step 2: Retune all the radios to links in the new force
+local function OnForcesMerged(event)
+  -- detect the empty table and trigger a retuning
+  if storage.teams[event.source_index] then
+    for channel,link in pairs(storage.teams[event.source_index]) do
+      link.destroy()
+    end
+    storage.teams[event.source_index] = nil
+    retune_all()
+  end
+end
+
+
 
 remote.add_interface('shortwave', {
     get_channel_merged_signals = function(force, channel)
@@ -427,6 +442,9 @@ script.on_event(defines.events.on_space_platform_mined_entity, OnEntityRemoved, 
 -- When links are destroyed silently, respond the following tick
 script.on_event(defines.events.on_object_destroyed, OnObjectDestroyed)
 
+-- When forces are merged
+script.on_event(defines.events.on_forces_merged, OnForcesMerged)
+
 -- When player changes settings
 script.on_event(defines.events.on_gui_closed, OnEntitySettingChanged)
 script.on_event(defines.events.on_entity_settings_pasted, OnEntitySettingChanged)
@@ -468,6 +486,9 @@ end)
 -- Console commands
 commands.add_command("shortwave-dump", "Dump storage to log", function() log(serpent.block(storage)) end)
 commands.add_command("shortwave-debug", "Dump storage to console", function() game.print(serpent.block(storage)) end)
+
+
+require("__gvv__.gvv")()
 
 ------------------------------------------------------------------------------------
 --                    FIND LOCAL VARIABLES THAT ARE USED GLOBALLY                 --
