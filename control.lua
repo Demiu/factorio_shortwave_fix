@@ -455,7 +455,7 @@ script.on_event(defines.events.on_player_pipette, function(event)
   local player = game.players[event.player_index]
   if event.item.name ==  "shortwave-port" then
     player.cursor_stack.clear()
-    player.pipette_entity({name="shortwave-radio", quality=event.quality})
+    player.pipette_entity(prototypes.entity["shortwave-radio"], event.quality)
   end
 end)
 
