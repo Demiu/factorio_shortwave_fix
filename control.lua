@@ -306,8 +306,12 @@ local function OnEntityCreated(event)
     check_channels()
   end
 
-  reset_rotation(entity)
-  entity.rotatable = false
+  -- lock rotation after building
+  local name = entity.name == "entity-ghost" and entity.ghost_name or entity.name
+  if name == "shortwave-radio" or name == "shortwave-port" then
+    reset_rotation(entity)
+    entity.rotatable = false
+  end
 end
 
 local function OnEntityRotated(event)
